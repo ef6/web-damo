@@ -1,0 +1,33 @@
+name: rain CI
+
+on:
+  push:
+    branches: emoji-rain
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        ref: rain
+        fetch-depth: 1
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - name: npm install, build
+      run: |
+        npm install
+        npm run build
+    - name: Prepare pushed files
+      run: |
+        git switch master
+        cp ./public/bundle.css ./rain/
+        cp ./public/bundle.js ./rain/
+    - name: Push to gh-pages
+      run: |
+        git config --global user.email "github-pages-deploy-action@users.noreply.github.com"
+        git config --global user.name "${GITHUB_ACTOR}"
+        git commit -am "${GITHUB_EVENT_NAME}"
+        git push https://${{ secrets.CI_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git gh-pages

@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>现场照片排版工具</title>
+        <style type="text/css">
+            body {
+                background-color: gray;
+                position: relative;
+                margin: 0 auto;
+            }
+            #dl {
+				position: fixed;
+				left: 10px;
+				top: 10px;
+				width: 100px;
+				height: 40px;
+				font-size: 24px;
+            }
+            label {
+                position: absolute;
+                border: 1px dashed #c3c3c3;
+                width:400px;
+                height:300px;
+                font-size: 64px;
+                cursor: pointer;
+                text-align: center;
+                color: white;
+                text-shadow: 0px 0px 3px #000;
+            }
+            label:hover {
+				color: blue;
+				border-color: blue;
+				text-shadow: 0px 0px 3px #fff;
+			}
+            input { display: none; }
+        </style>
+    </head>
+    <body style="width:1050px;height:1485px">
+        <canvas id="page" style="width:100%;height:100%"></canvas>
+
+        <label style="left:115px;top:105px"><span>小区大门</span>
+        <input
+			type="file"
+			accept="image/png, image/jpeg, image/jpg"
+			onchange="readFile(this,23,21)">
+        </label>
+        <label style="left:535px;top:105px"><span>建筑外墙</span>
+        <input
+			type="file"
+			accept="image/png, image/jpeg, image/jpg"
+			onchange="readFile(this,107,21)">
+        </label>
+        <label style="left:115px;top:430px"><span>单元大门</span>
+        <input
+			type="file"
+			accept="image/png, image/jpeg, image/jpg"
+			onchange="readFile(this,23,86)">
+        </label>
+        <label style="left:535px;top:430px"><span>入户大门</span>
+        <input
+			type="file"
+			accept="image/png, image/jpeg, image/jpg"
+			onchange="readFile(this,107,86)">
+        </label>
+        <label style="left:115px;top:755px"><span>客厅</span>
+        <input
+			type="file"
+			accept="image/png, image/jpeg, image/jpg"
+			onchange="readFile(this,23,151)">
+        </label>
+        <label style="left:535px;top:755px"><span>卧室</span>
+        <input
+			type="file"
+			accept="image/png, image/jpeg, image/jpg"
+			onchange="readFile(this,107,151)">
+        </label>
+        <label style="left:115px;top:1080px"><span>厨房</span>
+        <input
+			type="file"
+			accept="image/png, image/jpeg, image/jpg"
+			onchange="readFile(this,23,216)">
+        </label>
+        <label style="left:535px;top:1080px"><span>卫生间</span>
+        <input
+			type="file"
+			accept="image/png, image/jpeg, image/jpg"
+			onchange="readFile(this,107,216)">
+        </label>
+		<button id="dl" onclick="save()">下载</button >
+    </body>
+<script>
+	var ratio=12; // 比例
+    var c=document.getElementById("page");
+    c.width=210*ratio;
+    c.height=297*ratio;
+    var ctx=c.getContext("2d");
+    ctx.fillStyle="#FFFFFF";
+    ctx.fillRect(0,0,c.width,c.height);
+    
+    function readFile(obj,x,y) {
+        let label = obj.previousElementSibling;
+        let file = obj.files[0];//获取input输入的图片
+        let reader = new FileReader();
+        reader.readAsDataURL(file);//转化成base64数据类型
+        label.innerText="加载中...";
+        reader.onload = function(e) {
+                let img = new Image;
+                img.src = this.result;
+                img.onload = ()=>{
+                    ctx.drawImage(img,x*ratio,y*ratio,80*ratio,60*ratio);
+                    label.innerHTML="";
+                    }//必须onload之后再画
+            }
+    }
+    
+    function save() {
+		let imgURL=c.toDataURL("image/jpeg",0.85);
+		let link=document.createElement("a");
+		link.href=imgURL;
+		link.download="八张照片.jpg";
+		let event=document.createEvent("MouseEvents");
+		event.initMouseEvent("click",true,false);
+		link.dispatchEvent(event);
+    }
+    
+</script>
+</html>
