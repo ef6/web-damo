@@ -23,8 +23,8 @@ jobs:
     - name: Prepare pushed files
       run: |
         git switch master
-        cp ./public/bundle.css ./rain/
-        cp ./public/bundle.js ./rain/
+        cp ./public/bundle.css ./emoji-rain/
+        cp ./public/bundle.js ./emoji-rain/
     - name: Push to gh-pages
       run: |
         git config --global user.email "github-pages-deploy-action@users.noreply.github.com"
