@@ -1,36 +1,27 @@
 <script>
-	import { onMount } from 'svelte';
-
-	let characters = ['❤','💛','💚','💙','💜'];
-    let density = 80
-	let confetti = new Array(density).fill()
+	let characters = ['❤','💛','💚','💙','💜']; // 特点
+	let density = 80 // 密度
+	let confetti = new Array(density).fill()  // 五彩纸屑
 		.map((_, i) => {
 			return {
 				character: characters[i % characters.length],
 				x: Math.random() * 100,
-				y: -20 - Math.random() * 100,
-				r: 0.1 + Math.random() * 1
+				y: -5 - Math.random() * 100,
+				r: 0.2 + Math.random() * 1
 			};
 		})
 		.sort((a, b) => a.r - b.r);
 
-	onMount(() => {
-		let frame;
+	function loop() {
+		confetti = confetti.map(emoji => {
+			emoji.y += 0.7 * emoji.r;
+			if (emoji.y > 100) emoji.y = -5;
+			return emoji;
+		});
+		requestAnimationFrame(loop);
+	}
 
-		function loop() {
-			frame = requestAnimationFrame(loop);
-
-			confetti = confetti.map(emoji => {
-				emoji.y += 0.7 * emoji.r;
-				if (emoji.y > 120) emoji.y = -20;
-				return emoji;
-			});
-		}
-
-		loop();
-
-		return () => cancelAnimationFrame(frame);
-	});
+	loop();
 </script>
 
 <style>
