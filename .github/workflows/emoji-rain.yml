@@ -8,26 +8,33 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-      with:
-        ref: emoji-rain
-        fetch-depth: 1
-    - name: Use Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 10.x
-    - name: npm install, build
-      run: |
-        npm install
-        npm run build
-    - name: Prepare pushed files
-      run: |
-        git switch master
-        cp ./public/bundle.css ./emoji-rain/
-        cp ./public/bundle.js ./emoji-rain/
-    - name: Push to gh-pages
-      run: |
-        git config --global user.email "github-pages-deploy-action@users.noreply.github.com"
-        git config --global user.name "${GITHUB_ACTOR}"
-        git commit -am "${GITHUB_EVENT_NAME}"
-        git push https://${{ secrets.CI_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git gh-pages
+      - uses: actions/checkout@v1
+        with:
+          ref: emoji-rain
+          fetch-depth: 1
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: npm install, build
+        run: |
+          npm install
+          npm run build
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Init git config
+        run: |
+          git config --global user.email "github-pages-deploy-action@users.noreply.github.com"
+          git config --global user.name "${GITHUB_ACTOR}"
+      - name: Switch deployed branch
+        run: git switch master
+      - name: Prepare pushed files
+        run: |
+          cp ./public/bundle.css ./emoji-rain/
+          cp ./public/bundle.js ./emoji-rain/
+      - name: Commit file
+        run: git commit -am "${GITHUB_EVENT_NAME}"
+      - name: Deploying
+        run: git push https://${{ secrets.CI_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git gh-pages
