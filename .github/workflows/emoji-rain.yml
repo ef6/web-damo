@@ -10,6 +10,7 @@ jobs:
       Deployed_Branch: master
     runs-on: ubuntu-latest
     steps:
+      - run: echo triggered by ${GITHUB_ACTOR}-${GITHUB_EVENT_NAME}
       - uses: actions/checkout@v1
         with:
           ref: emoji-rain
@@ -26,7 +27,7 @@ jobs:
       - name: Init git config
         run: |
           git config --global user.email "github-pages-deploy-action@users.noreply.github.com"
-          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.name "🏗"
       - name: Switch deployed branch
         run: git switch ${Deployed_Branch}
       - name: Prepare pushed files
@@ -34,6 +35,6 @@ jobs:
           cp ./public/bundle.css ./emoji-rain/
           cp ./public/bundle.js ./emoji-rain/
       - name: Commit file
-        run: git commit -am "${GITHUB_EVENT_NAME}"
+        run: git commit -am "🏗 Auto Deploy"
       - name: Deploying
         run: git push https://${{ secrets.CI_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git ${Deployed_Branch}
